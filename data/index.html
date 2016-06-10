@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Random Color</title>
+	<script type="text/javascript" charset="utf-8" src="resource://colortab/data/colors.js"></script>
+	<script>
+		window.onload = () => {
+			var color = colors[Math.floor(Math.random() * colors.length)];
+
+			document.querySelector("#title").innerHTML = color.title;
+			document.querySelector("#user").innerHTML  = color.userName;
+
+			Array.from(document.querySelector("#palette ul").children).forEach((load, i) => {
+				load.style.backgroundColor = "#" + color.colors[i];
+				load.innerHTML = `<div class="color-hex">#${color.colors[i]}</div>`;
+			});
+		}
+	</script>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			display: flex;
+			min-height: 100vh;
+			flex-direction: column;
+		}
+		#palette {
+			flex: 1;
+		}
+		#palette ul {
+			padding: 0;
+			text-align: center;
+		}
+		#palette ul li {
+			display: inline-block;
+			min-height: 40vh;
+			min-width: 19%;
+		}
+	</style>
+</head>
+<body id="page">
+	<div class="header">
+		<h1 id="title"></h1>
+		<p>By <span id="user"></span></p>
+	</div>
+	<div id="palette">
+		<ul>
+			<li></li><li></li><li></li><li></li><li></li>
+		</ul>
+	</div>
+	<footer>I am wildsky</footer>
+</body>
+</html>
