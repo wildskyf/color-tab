@@ -1,21 +1,31 @@
 const {Cc, Ci, Cm, Cr, Cu, CC, components} = require("chrome");
-const self = require("sdk/self"), tabs = require("sdk/tabs");
-
-Cm.QueryInterface(Ci.nsIComponentRegistrar);
-components.utils.import("resource://gre/modules/Services.jsm");
+const { get, set, reset } = require('sdk/preferences/service');
+const self = require("sdk/self");
+const tabs = require("sdk/tabs");
 
 // globals
 var factory;
-const aboutPage_description = 'This page provides some random colors';
-const aboutPage_id = 'aa132730-2278-11e5-867f-0800200c9a66'; // make sure you generate a unique id from https://www.famkruithof.net/uuid/uuidgen
-const aboutPage_word = 'rancolor';
-const aboutPage_page = "resource://colortab/data/index.html";
+const _name = 'rancolor';
+const _description = 'This page provides some random colors';
+const _id = 'aa132730-2278-11e5-867f-0800200c9a66'; // https://www.famkruithof.net/uuid/uuidgen
+const _url = `about:${_name}`;
+const _src = "resource://colortab/data/index.html";
+
+var vff = parseInt(get('browser.startup.homepage_override.mstone'));
+if(vff > 40) {
+	NewTabURL = require('resource:///modules/NewTabURL.jsm').NewTabURL;
+	NewTabURL.override(_url);
+}
+//set('browser.startup.homepage', _url);
+
+Cm.QueryInterface(Ci.nsIComponentRegistrar);
+Cu.import("resource://gre/modules/Services.jsm");
 
 function AboutCustom() {}
 AboutCustom.prototype = Object.freeze({
-    classDescription: aboutPage_description,
-    contractID: '@mozilla.org/network/protocol/about;1?what=' + aboutPage_word,
-    classID: components.ID('{' + aboutPage_id + '}'),
+    classDescription: _description,
+    contractID: '@mozilla.org/network/protocol/about;1?what=' + _name,
+    classID: components.ID(`{${_id}}`),
     xpcom_categories: ["content-policy"],
 
     getURIFlags: (aURI) => Ci.nsIAboutModule.ALLOW_SCRIPT,
@@ -23,13 +33,12 @@ AboutCustom.prototype = Object.freeze({
     newChannel: (aURI, aSecurity_or_aLoadInfo) => {
         var channel;
         if (Services.vc.compare(Services.appinfo.version, '47.*') > 0) {
-              let uri = Services.io.newURI(aboutPage_page, null, null);
+              let uri = Services.io.newURI(_src, null, null);
               // greater than or equal to firefox48 so aSecurity_or_aLoadInfo is aLoadInfo
               channel = Services.io.newChannelFromURIWithLoadInfo(uri, aSecurity_or_aLoadInfo);
-        } else {
-              // less then firefox48 aSecurity_or_aLoadInfo is aSecurity
-              channel = Services.io.newChannel(aboutPage_page, null, null);
         }
+        else // less then firefox48 aSecurity_or_aLoadInfo is aSecurity
+              channel = Services.io.newChannel(_src, null, null);
         channel.originalURI = aURI;
         return channel;
     }
@@ -50,16 +59,13 @@ function Factory(component) {
     this.register();
 }
 
+
 tabs.on('activate', tab => {
-	if(tab.url === "about:blank" || tab.url === "about:newtab")
-		tab.url = self.data.url(`about:${aboutPage_word}`);
 	if(!factory)
 		factory = new Factory(AboutCustom);
-})
-;
-/*
+});
+
 tabs.on('close', tab => {
 	if(!factory)
 		factory.unregister();
 });
-*/
