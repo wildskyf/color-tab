@@ -6,7 +6,7 @@ components.utils.import("resource://gre/modules/Services.jsm");
 
 // globals
 var factory;
-const aboutPage_description = 'This page could provide some random colors';
+const aboutPage_description = 'This page provides some random colors';
 const aboutPage_id = 'aa132730-2278-11e5-867f-0800200c9a66'; // make sure you generate a unique id from https://www.famkruithof.net/uuid/uuidgen
 const aboutPage_word = 'rancolor';
 const aboutPage_page = "resource://colortab/data/index.html";
