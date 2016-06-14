@@ -1,22 +1,14 @@
 const {Cc, Ci, Cm, Cr, Cu, CC, components} = require("chrome");
-const { get, set, reset } = require('sdk/preferences/service');
-const self = require("sdk/self");
+const { get, set } = require('sdk/preferences/service');
 const tabs = require("sdk/tabs");
 
 // globals
-var factory;
+var factory = undefined;
 const _name = 'rancolor';
 const _description = 'This page provides some random colors';
 const _id = 'aa132730-2278-11e5-867f-0800200c9a66'; // https://www.famkruithof.net/uuid/uuidgen
 const _url = `about:${_name}`;
 const _src = "resource://colortab/data/index.html";
-
-var vff = parseInt(get('browser.startup.homepage_override.mstone'));
-if(vff > 40) {
-	NewTabURL = require('resource:///modules/NewTabURL.jsm').NewTabURL;
-	NewTabURL.override(_url);
-}
-//set('browser.startup.homepage', _url);
 
 Cm.QueryInterface(Ci.nsIComponentRegistrar);
 Cu.import("resource://gre/modules/Services.jsm");
@@ -63,6 +55,13 @@ function Factory(component) {
 tabs.on('activate', tab => {
 	if(!factory)
 		factory = new Factory(AboutCustom);
+
+	var vff = parseInt(get('browser.startup.homepage_override.mstone'));
+	if(vff > 40) {
+		NewTabURL = require('resource:///modules/NewTabURL.jsm').NewTabURL;
+		NewTabURL.override(_url);
+	}
+	//set('browser.startup.homepage', _url);
 });
 
 tabs.on('close', tab => {
