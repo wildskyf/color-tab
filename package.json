@@ -1,7 +1,7 @@
 {
   "title": "Color Tab",
   "name": "colortab",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Random colors on new tab page",
   "main": "index.js",
   "author": "Geng-Zhi Fann",
@@ -11,6 +11,6 @@
   },
   "license": "MIT",
   "keywords": [
-    "Random", "palettab"
+    "Random", "Color", "Palettab"
   ]
 }

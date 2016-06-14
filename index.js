@@ -1,5 +1,4 @@
 const {Cc, Ci, Cm, Cr, Cu, CC, components} = require("chrome");
-const { get, set } = require('sdk/preferences/service');
 const tabs = require("sdk/tabs");
 
 // globals
@@ -15,53 +14,44 @@ Cu.import("resource://gre/modules/Services.jsm");
 
 function AboutCustom() {}
 AboutCustom.prototype = Object.freeze({
-    classDescription: _description,
-    contractID: '@mozilla.org/network/protocol/about;1?what=' + _name,
-    classID: components.ID(`{${_id}}`),
-    xpcom_categories: ["content-policy"],
+	classDescription: _description,
+	contractID: '@mozilla.org/network/protocol/about;1?what=' + _name,
+	classID: components.ID(`{${_id}}`),
+	xpcom_categories: ["content-policy"],
 
-    getURIFlags: (aURI) => Ci.nsIAboutModule.ALLOW_SCRIPT,
+	getURIFlags: (aURI) => Ci.nsIAboutModule.ALLOW_SCRIPT,
 
-    newChannel: (aURI, aSecurity_or_aLoadInfo) => {
-        var channel;
-        if (Services.vc.compare(Services.appinfo.version, '47.*') > 0) {
-              let uri = Services.io.newURI(_src, null, null);
-              // greater than or equal to firefox48 so aSecurity_or_aLoadInfo is aLoadInfo
-              channel = Services.io.newChannelFromURIWithLoadInfo(uri, aSecurity_or_aLoadInfo);
-        }
-        else // less then firefox48 aSecurity_or_aLoadInfo is aSecurity
-              channel = Services.io.newChannel(_src, null, null);
-        channel.originalURI = aURI;
-        return channel;
-    }
+	newChannel: (aURI, aSecurity_or_aLoadInfo) => {
+		let uri = Services.io.newURI(_src, null, null); // greater than firefox48
+		var channel = Services.io.newChannelFromURIWithLoadInfo(uri, aSecurity_or_aLoadInfo);
+		channel.originalURI = aURI;
+		return channel;
+	}
 });
 
 function Factory(component) {
-    this.createInstance = (outer, iid) => {
-        if (outer)
-            throw Cr.NS_ERROR_NO_AGGREGATION;
-        return new component();
-    };
-    this.register = () =>
-        Cm.registerFactory(component.prototype.classID, component.prototype.classDescription, component.prototype.contractID, this);
-    this.unregister = () =>
-        Cm.unregisterFactory(component.prototype.classID, this);
+	this.createInstance = (outer, iid) => {
+		if (outer)
+			throw Cr.NS_ERROR_NO_AGGREGATION;
+		return new component();
+	};
+	this.register = () =>
+		Cm.registerFactory(component.prototype.classID, component.prototype.classDescription, component.prototype.contractID, this);
+	this.unregister = () =>
+		Cm.unregisterFactory(component.prototype.classID, this);
 
-    Object.freeze(this);
-    this.register();
+	Object.freeze(this);
+	this.register();
 }
-
 
 tabs.on('activate', tab => {
 	if(!factory)
 		factory = new Factory(AboutCustom);
 
-	var vff = parseInt(get('browser.startup.homepage_override.mstone'));
-	if(vff > 40) {
+	if(parseInt(require('sdk/preferences/service').get('browser.startup.homepage_override.mstone')) > 40) {
 		NewTabURL = require('resource:///modules/NewTabURL.jsm').NewTabURL;
 		NewTabURL.override(_url);
 	}
-	//set('browser.startup.homepage', _url);
 });
 
 tabs.on('close', tab => {
