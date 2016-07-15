@@ -1,5 +1,10 @@
 const {Cc, Ci, Cm, Cr, Cu, CC, components} = require("chrome");
-const tabs = require("sdk/tabs");
+const {NewTabURL} = require('resource:///modules/NewTabURL.jsm');
+const ogd4tab = NewTabURL.get();
+
+Cm.QueryInterface(Ci.nsIComponentRegistrar);
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://gre/modules/Services.jsm");
 
 // globals
 var factory = undefined;
@@ -9,20 +14,17 @@ const _id = 'aa132730-2278-11e5-867f-0800200c9a66'; // https://www.famkruithof.n
 const _url = `about:${_name}`;
 const _src = "resource://colortab/data/index.html";
 
-Cm.QueryInterface(Ci.nsIComponentRegistrar);
-Cu.import("resource://gre/modules/Services.jsm");
-
-function AboutCustom() {}
+function AboutCustom() {};
 AboutCustom.prototype = Object.freeze({
 	classDescription: _description,
 	contractID: '@mozilla.org/network/protocol/about;1?what=' + _name,
 	classID: components.ID(`{${_id}}`),
-	xpcom_categories: ["content-policy"],
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIAboutModule]),
 
-	getURIFlags: (aURI) => Ci.nsIAboutModule.ALLOW_SCRIPT,
+	getURIFlags: aURI => Ci.nsIAboutModule.ALLOW_SCRIPT,
 
 	newChannel: (aURI, aSecurity_or_aLoadInfo) => {
-		let uri = Services.io.newURI(_src, null, null); // greater than firefox48
+		let uri = Services.io.newURI(_src, null, null);
 		var channel = Services.io.newChannelFromURIWithLoadInfo(uri, aSecurity_or_aLoadInfo);
 		channel.originalURI = aURI;
 		return channel;
@@ -44,17 +46,13 @@ function Factory(component) {
 	this.register();
 }
 
-tabs.on('activate', tab => {
-	if(!factory)
-		factory = new Factory(AboutCustom);
+exports.main = () => {
+	factory = new Factory(AboutCustom);
+	NewTabURL.override(_url);
+}
 
-	if(parseInt(require('sdk/preferences/service').get('browser.startup.homepage_override.mstone')) > 40) {
-		NewTabURL = require('resource:///modules/NewTabURL.jsm').NewTabURL;
-		NewTabURL.override(_url);
-	}
-});
+exports.onUnload = () => {
+	factory.unregister();
+	NewTabURL.override(ogd4tab);
+}
 
-tabs.on('close', tab => {
-	if(!factory)
-		factory.unregister();
-});
