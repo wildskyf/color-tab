@@ -1,13 +1,16 @@
 {
   "title": "Color Tab",
   "name": "colortab",
-  "version": "0.2.0",
-  "description": "Random colors on new tab page",
+  "version": "0.2.1",
+  "description":
+    "This add-on will let your boring new-tab page provide some beautiful color sets, let's take good care of eyes by opening a awesome new tab!",
   "main": "index.js",
   "author": "wildskyf",
   "engines": {
-    "firefox": ">=40",
-    "fennec": ">=38.0a1"
+    "firefox": ">=40.0a1"
+  },
+  "permissions": {
+    "multiprocess": true
   },
   "license": "MIT",
   "keywords": [
