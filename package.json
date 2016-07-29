@@ -1,7 +1,7 @@
 {
   "title": "Color Tab",
   "name": "colortab",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description":
     "This add-on will let your boring new-tab page provide some beautiful color sets, let's take good care of eyes by opening a awesome new tab!",
   "main": "index.js",
