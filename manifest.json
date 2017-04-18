@@ -1,0 +1,32 @@
+{
+  "applications": {
+    "gecko": {
+      "id": "@colortab",
+      "strict_min_version": "48"
+    }
+  },
+  "manifest_version": 2,
+  "author": "wildskyf",
+  "name": "Color Tab",
+  "version": "1.0.0",
+
+  "description": "This addon would replace your boring new-tab page to a page providing some random colors.",
+
+  "homepage_url": "https://github.com/wildskyf/color-tab",
+
+  "chrome_url_overrides": {
+    "newtab": "data/index.html"
+  },
+
+  "permissions": [ "tabs" ],
+
+  "background": {
+    "scripts": ["index.js"]
+  },
+
+  "license": "MIT",
+
+  "keywords": [
+    "Random", "Color", "Palettab"
+  ]
+}
