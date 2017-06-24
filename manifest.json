@@ -20,10 +20,6 @@
 
   "permissions": [ "tabs" ],
 
-  "background": {
-    "scripts": ["index.js"]
-  },
-
   "license": "MIT",
 
   "keywords": [
