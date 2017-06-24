@@ -22,5 +22,9 @@
 
   "keywords": [
     "Random", "Color", "Palettab"
+  ],
+
+  "web_accessible_resources": [
+    "data/colors.json"
   ]
 }
