@@ -1,2 +1,3 @@
-# Color Tab
-Random colors on new tab page.
+# Palettab
+
+This project is merged by its origin repo, please move to [here](https://github.com/tholman/palettab).
