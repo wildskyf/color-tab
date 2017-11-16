@@ -1,0 +1,3 @@
+[submodule "palettab"]
+	path = palettab
+	url = https://github.com/tholman/palettab
